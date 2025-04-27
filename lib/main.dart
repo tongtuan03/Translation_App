@@ -1,17 +1,24 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:translation_app/blocs/signin/signin_bloc.dart';
 import 'app.dart';
-import 'screens/login_screen.dart'; // Để chỉ định trang đăng nhập
-import 'firebase_options.dart'; // Firebase configuration options
+import 'blocs/signup/signup_bloc.dart';
+import 'firebase_options.dart';
+import 'simple_bloc_observer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Khởi tạo Firebase với FirebaseOptions
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  Bloc.observer = const SimpleBlocObserver();
+  runApp(
+    DevicePreview(
+      enabled: true,
+      builder: (context) => MyApp(),
+    ),
+  );
 }
-
 
