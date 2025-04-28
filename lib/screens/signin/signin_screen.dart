@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:translation_app/screens/home_screen.dart';
-import 'package:translation_app/screens/signup_screen.dart';
-
-
-import '../blocs/signin/signin_bloc.dart';
-import '../blocs/signin/signin_event.dart';
-import '../blocs/signin/signin_state.dart';
-import '../share_preferences/login_preferences.dart';
-import '../theme/theme.dart';
-import '../widgets/custom_scaffold.dart';
+import '../../blocs/signin/signin_bloc.dart';
+import '../../blocs/signin/signin_event.dart';
+import '../../blocs/signin/signin_state.dart';
+import '../../share_preferences/login_preferences.dart';
+import '../../theme/theme.dart';
+import '../../widgets/custom_scaffold.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -32,7 +28,7 @@ class _SignInScreenState extends State<SignInScreen> {
               ScaffoldMessenger.of(context)
                   .showSnackBar(const SnackBar(content: Text("Login Successful")));
               LoginPreference.setLogin(StateLogin.loggedIn);
-              Navigator.pushReplacementNamed(context, '/');
+              Navigator.pushReplacementNamed(context, '/home');
             } else if (state is SigninFailure) {
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(state.error)));

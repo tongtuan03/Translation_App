@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:translation_app/screens/signin_screen.dart';
+import 'package:translation_app/screens/signin/signin_screen.dart';
 
-import '../blocs/signup/signup_bloc.dart';
-import '../blocs/signup/signup_event.dart';
-import '../blocs/signup/signup_state.dart';
-import '../share_preferences/login_preferences.dart';
-import '../theme/theme.dart';
-import '../widgets/custom_scaffold.dart';
-import 'home_screen.dart';
+import '../../blocs/signup/signup_bloc.dart';
+import '../../blocs/signup/signup_event.dart';
+import '../../blocs/signup/signup_state.dart';
+import '../../share_preferences/login_preferences.dart';
+import '../../theme/theme.dart';
+import '../../widgets/custom_scaffold.dart';
+import '../home/home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

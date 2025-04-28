@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:translation_app/screens/signin_screen.dart';
-import 'package:translation_app/screens/signup_screen.dart';
-import '../theme/theme.dart';
-import '../widgets/custom_scaffold.dart';
-import '../widgets/welcome_button.dart';
+import 'package:translation_app/screens/signin/signin_screen.dart';
+import 'package:translation_app/screens/signup/signup_screen.dart';
+import '../../theme/theme.dart';
+import '../../widgets/custom_scaffold.dart';
+import '../../widgets/welcome_button.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
