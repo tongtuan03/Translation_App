@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:translation_app/screens/splash/splash_screen.dart';
-import 'package:translation_app/screens/welcome/welcome_screen.dart';
-
-import '../screens/home/home_screen.dart';
-import '../screens/signin/signin_screen.dart';
-import '../screens/signup/signup_screen.dart';
+import 'package:translation_app/features/splash/view/splash_screen.dart';
+import '../features/home/home_screen.dart';
+import '../features/signin/view/signin_screen.dart';
+import '../features/signup/view/signup_screen.dart';
+import '../features/welcome/welcome_screen.dart';
 
 class AppRouter {
   static Map<String, WidgetBuilder> routes = {
