@@ -14,7 +14,7 @@ class HomeScreen extends StatelessWidget {
     const MySpeechToText(),
     const TranslationScreen(),
     const MyTextToSpeech(),
-    const GeminiChatbot(),
+    const GeminiChatbotView(),
   ];
 
   @override

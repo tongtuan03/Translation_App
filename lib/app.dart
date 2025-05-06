@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:translation_app/features/chatbot/bloc/chatbot_bloc.dart';
 import 'package:translation_app/features/splash/bloc/splash_bloc.dart';
 import 'package:translation_app/routes/router.dart';
 import 'blocs/navigationbar/navigation_cubit.dart';
@@ -15,7 +16,8 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (_) => SigninBloc()),
           BlocProvider(create: (_) => SignupBloc()),
           BlocProvider(create: (_) => NavigationCubit()),
-          BlocProvider(create: (_) => SplashBloc()..add(SplashCheckLoginStatus())),
+          BlocProvider(create: (_) => ChatBloc()),
+          BlocProvider(create: (_) => SplashBloc()),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

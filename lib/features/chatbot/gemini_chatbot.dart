@@ -1,89 +1,117 @@
+// gemini_chatbot_view.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:translation_app/features/chatbot/bloc/chatbot_bloc.dart';
+import 'package:translation_app/features/chatbot/bloc/chatbot_event.dart';
+import 'package:translation_app/features/chatbot/bloc/chatbot_state.dart';
 
-import 'model.dart';
+// Loại bỏ GeminiChatbotProvider vì đã khai báo ở App
 
-class GeminiChatbot extends StatefulWidget {
-  const GeminiChatbot({super.key});
-
-  @override
-  State<GeminiChatbot> createState() => _GeminiChatbotState();
-}
-
-class _GeminiChatbotState extends State<GeminiChatbot> {
-  TextEditingController promtController = TextEditingController();
-  static var apiKey = dotenv.env['API_KEY'] ?? '';
-  final model = GenerativeModel(model: "gemini-2.0-flash", apiKey: apiKey);
-  final List<ModelMessage> promt = [];
-  final isPromt = true;
-
-  Future<void> sendMessage() async {
-    final message = promtController.text;
-    setState(() {
-      promtController.clear();
-      promt.add(
-        ModelMessage(isPromt: true, message: message, time: DateTime.now()),
-      );
-    });
-    final content = [Content.text(message)];
-    final response = await model.generateContent(content);
-    setState(() {
-      promt.add(
-        ModelMessage(
-          isPromt: false,
-          message: response.text ?? "",
-          time: DateTime.now(),
-        ),
-      );
-    });
-  }
-
+class GeminiChatbotView extends StatelessWidget {
+  const GeminiChatbotView({super.key});
   @override
   Widget build(BuildContext context) {
+    final TextEditingController promptController = TextEditingController();
+    final ScrollController scrollController = ScrollController();
+    void scrollToBottom(int itemCount) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (scrollController.hasClients && itemCount > 0) {
+          scrollController.animateTo(
+            scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    }
+    void sendMessage() {
+      final message = promptController.text;
+      if (message.trim().isNotEmpty) {
+        context.read<ChatBloc>().add(SendMessageEvent(message));
+        promptController.clear();
+      }
+    }
     return Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              itemCount: promt.length,
-              itemBuilder: (context, index) {
-                final message = promt[index];
-                return userPromt(
-                  isPromt: message.isPromt,
-                  message: message.message,
-                  date: DateFormat("hh:mm a").format(message.time),
+            child: BlocConsumer<ChatBloc, ChatState>(
+              listener: (context, state) {
+                if (state is ChatError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error: ${state.errorMessage}'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+                if (state is ChatLoaded || state is ChatLoading) {
+                  scrollToBottom(state.messages.length);
+                }
+              },
+              builder: (context, state) {
+                if (state is ChatInitial && state.messages.isEmpty) {
+                  return const Center(child: Text('Start chatting!'));
+                }
+                return ListView.builder(
+                  controller: scrollController,
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  itemCount: state.messages.length + (state is ChatLoading ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (state is ChatLoading && index == state.messages.length) {
+                      return _buildLoadingIndicator();
+                    }
+                    final message = state.messages[index];
+                    return _buildMessageBubble(
+                      context: context,
+                      isPromt: message.isPromt,
+                      message: message.message,
+                      date: DateFormat("hh:mm a").format(message.time),
+                    );
+                  },
                 );
               },
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(15.0),
             child: Row(
               children: [
                 Expanded(
-                  flex: 20,
                   child: TextField(
-                    controller: promtController,
-                    style: const TextStyle(color: Colors.black, fontSize: 20),
+                    controller: promptController,
+                    style: const TextStyle(color: Colors.black, fontSize: 18),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide(color: Colors.grey.shade400),
                       ),
-                      hintText: "Enter a promt here",
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                      ),
+                      hintText: "Enter a prompt...",
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                     ),
+                    onSubmitted: (_) => sendMessage(),
+                    textInputAction: TextInputAction.send,
                   ),
                 ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    sendMessage();
+                const SizedBox(width: 10),
+                BlocBuilder<ChatBloc, ChatState>(
+                  builder: (context, state) {
+                    final isLoading = state is ChatLoading;
+                    return IconButton(
+                      icon: const Icon(Icons.send, size: 30),
+                      color: isLoading ? Colors.grey : Theme.of(context).primaryColor,
+                      style: IconButton.styleFrom(
+                          backgroundColor: isLoading ? Colors.grey.shade300 : Theme.of(context).primaryColorLight.withOpacity(0.2),
+                          padding: const EdgeInsets.all(14)
+                      ),
+                      onPressed: isLoading ? null : sendMessage,
+                      tooltip: 'Send Message',
+                    );
                   },
-                  child: const CircleAvatar(
-                    radius: 29,
-                    backgroundColor: Colors.black,
-                    child: Icon(Icons.send, color: Colors.white, size: 32),
-                  ),
                 ),
               ],
             ),
@@ -92,45 +120,65 @@ class _GeminiChatbotState extends State<GeminiChatbot> {
     );
   }
 
-  Container userPromt({
+  Widget _buildLoadingIndicator() {
+    return const Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2)
+            ),
+            SizedBox(width: 10),
+            Text("Typing...", style: TextStyle(color: Colors.grey)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Hàm tạo bubble tin nhắn (cần context nếu dùng Theme)
+  Widget _buildMessageBubble({
+    required BuildContext context, // Thêm context
     required final bool isPromt,
     required String message,
     required String date,
   }) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(15),
-      margin: const EdgeInsets.symmetric(vertical: 15).copyWith(
-          left: isPromt ? 80 : 15, right: isPromt ? 15 : 80),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 5).copyWith(
+        left: isPromt ? 60 : 10,
+        right: isPromt ? 10 : 60,
+      ),
       decoration: BoxDecoration(
-        color: isPromt == true ? Colors.green : Colors.grey,
+        color: isPromt ? Theme.of(context).primaryColor.withOpacity(0.8) : Colors.grey.shade300,
         borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(20),
-            topRight: const Radius.circular(20),
-            bottomLeft: isPromt ? const Radius.circular(20) : Radius.zero,
-            bottomRight: isPromt?  Radius.zero:const Radius.circular(20),
-
+          topLeft: const Radius.circular(18),
+          topRight: const Radius.circular(18),
+          bottomLeft: isPromt ? const Radius.circular(18) : Radius.zero,
+          bottomRight: isPromt ? Radius.zero : const Radius.circular(18),
         ),
-
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: isPromt ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          //for promt and response
-          Text(
-            message,
+          SelectableText(
+            message, // message.message,
             style: TextStyle(
-              fontWeight: isPromt ? FontWeight.bold : FontWeight.normal,
-              fontSize: 18,
-              color: isPromt ? Colors.white : Colors.black,
+              fontSize: 16,
+              color: isPromt ? Colors.white : Colors.black87,
             ),
           ),
-          //for  promt and response time
+          const SizedBox(height: 4),
           Text(
             date,
             style: TextStyle(
-              fontSize: 14,
-              color: isPromt ? Colors.white : Colors.black,
+              fontSize: 10,
+              color: isPromt ? Colors.white70 : Colors.black54,
             ),
           ),
         ],
