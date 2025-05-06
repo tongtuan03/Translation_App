@@ -108,16 +108,12 @@ class _TranslationScreenState extends State<TranslationScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF0F0F0),
 
-      // Padding around contents
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(top: 50.0, left: 16.0, right: 16.0),
-        
-          // Column starts here
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Container for text translation and text_field icon
               Container(
                 padding:
                     const EdgeInsets.symmetric(vertical: 20, horizontal: 10.0),
@@ -129,8 +125,6 @@ class _TranslationScreenState extends State<TranslationScreen> {
                     ),
                   ),
                 ),
-        
-                //  Text translation and text_field icon in a row
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -143,8 +137,6 @@ class _TranslationScreenState extends State<TranslationScreen> {
                         color: const Color(0xFF000000),
                       ),
                     ),
-        
-                    // text_field icon
                     const Icon(
                       Icons.text_fields,
                       color: Color(0xFF000000),
@@ -153,24 +145,17 @@ class _TranslationScreenState extends State<TranslationScreen> {
                   ],
                 ),
               ),
-        
-              // Padding around language dropdowns and swap_horiz icon
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),
-        
-                // language dropdowns and swap_horiz icon in a row
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // language dropdown from
                     Expanded(
                       child: LanguageDropdown(
                           onLanguageChanged: _handleLanguageChangeFrom,
                           selectedCountry: selectedCountryFrom,
                       ),
                     ),
-        
-                    // Swap_horiz icon
                     GestureDetector(
                       onTap: _switchLanguage,
                       child: Icon(
@@ -179,18 +164,12 @@ class _TranslationScreenState extends State<TranslationScreen> {
 
                       ),
                     ),
-        
-                    // language dropdowns to
                     Expanded(child: LanguageDropdown(onLanguageChanged: _handleLanguageChangeTo,selectedCountry: selectedCountryTo,)),
                   ],
                 ),
               ),
-        
-              // Padding around the selected language from
               Padding(
                 padding: const EdgeInsets.only(top: 20.0, left: 10.0),
-        
-                // The selected language from in a row
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -227,8 +206,6 @@ class _TranslationScreenState extends State<TranslationScreen> {
               // Padding around the container for translate from
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),
-        
-                // Container for translate from
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: 223.0,
@@ -241,17 +218,11 @@ class _TranslationScreenState extends State<TranslationScreen> {
                       width: 0.2,
                     ),
                   ),
-        
-                  // Translatefrom class here
                   child: TranslateFrom(controller: controller),
                 ),
               ),
-        
-              // Padding around the selected language to
               Padding(
                 padding: const EdgeInsets.only(top: 20.0, left: 10.0),
-        
-                // The selected language to in a row
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -284,12 +255,8 @@ class _TranslationScreenState extends State<TranslationScreen> {
                   ],
                 ),
               ),
-        
-              // Padding around the selected language to
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),
-        
-                // Container for translate to
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: 223.0,
@@ -320,22 +287,16 @@ class _TranslationScreenState extends State<TranslationScreen> {
                       : TranslateTo(translatedText: _translatedText),
                 ),
               ),
-        
-              // Container for submit button in padding
               Padding(
                 padding: const EdgeInsets.only(top: 50.0),
                 child: GestureDetector(
                   onTap: _translateText,
-        
-                  // Container for submit button
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 15.0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20.0),
                       color: const Color(0xFF6D1B7B).withOpacity(0.8),
                     ),
-        
-                    // Submit text centered
                     child: Center(
                       // Submit text here
                       child: Text(

@@ -8,7 +8,7 @@ import 'package:translation_app/features/chatbot/model.dart';
 
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  late final GenerativeModel _model; // Sử dụng late final
+  late final GenerativeModel _model;
 
   ChatBloc() : super(const ChatInitial()) {
     _initializeModel();
@@ -18,8 +18,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   void _initializeModel() {
     final apiKey = dotenv.env['API_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
-      print('Lỗi: API_KEY không được tìm thấy trong file .env');
-      throw Exception('API_KEY is missing or empty in .env file');
+      throw Exception('API_KEY is missing or empty');
     }
     _model = GenerativeModel(model: "gemini-2.0-flash", apiKey: apiKey);
   }

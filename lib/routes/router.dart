@@ -7,7 +7,7 @@ import '../features/welcome/welcome_screen.dart';
 
 class AppRouter {
   static Map<String, WidgetBuilder> routes = {
-    '/': (context) =>  SplashScreen(),
+    '/': (context) =>  const SplashScreen(),
     '/home': (context) =>  HomeScreen(),
     '/welcome': (context) => const WelcomeScreen(),
     '/signin': (context) => const SignInScreen(),

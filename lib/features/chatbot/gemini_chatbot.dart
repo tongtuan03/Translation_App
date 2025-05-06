@@ -141,9 +141,8 @@ class GeminiChatbotView extends StatelessWidget {
     );
   }
 
-  // Hàm tạo bubble tin nhắn (cần context nếu dùng Theme)
   Widget _buildMessageBubble({
-    required BuildContext context, // Thêm context
+    required BuildContext context,
     required final bool isPromt,
     required String message,
     required String date,
@@ -167,7 +166,7 @@ class GeminiChatbotView extends StatelessWidget {
         crossAxisAlignment: isPromt ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           SelectableText(
-            message, // message.message,
+            message,
             style: TextStyle(
               fontSize: 16,
               color: isPromt ? Colors.white : Colors.black87,

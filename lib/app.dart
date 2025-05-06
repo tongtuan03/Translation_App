@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Translation App',
           theme: ThemeData(primarySwatch: Colors.blue),
-          initialRoute: '/home',
+          initialRoute: '/',
           routes: AppRouter.routes,
         ));
   }
