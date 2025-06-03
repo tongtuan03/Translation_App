@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:translation_app/features/chatbot/model.dart';
+
+import '../model/model.dart';
 abstract class ChatState extends Equatable {
   final List<ModelMessage> messages;
   const ChatState({this.messages = const []});

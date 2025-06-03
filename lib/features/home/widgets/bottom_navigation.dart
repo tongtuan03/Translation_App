@@ -19,6 +19,11 @@ class MyNavigationBar extends StatelessWidget {
             NavigationDestination(
               icon: Icon(FontAwesomeIcons.message),
               selectedIcon: Icon(FontAwesomeIcons.message),
+              label: 'Speech to Text',
+            ),
+            NavigationDestination(
+              icon: Icon(FontAwesomeIcons.message),
+              selectedIcon: Icon(FontAwesomeIcons.message),
               label: 'Conversation',
             ),
             NavigationDestination(

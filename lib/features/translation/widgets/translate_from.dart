@@ -4,7 +4,8 @@ import 'package:flutter_tts/flutter_tts.dart';
 
 class TranslateFrom extends StatefulWidget {
   final TextEditingController controller;
-  const TranslateFrom({super.key, required this.controller});
+  final String language;
+  const TranslateFrom({super.key, required this.controller, required this.language});
 
   @override
   State<TranslateFrom> createState() => _TranslateFromState();
@@ -56,6 +57,7 @@ class _TranslateFromState extends State<TranslateFrom> {
 
   Future<void> _handleVolumeUpTap() async {
     final text = widget.controller.text;
+    await _flutterTts.setLanguage(widget.language);
     await _flutterTts.speak(text);
   }
 
@@ -72,7 +74,6 @@ class _TranslateFromState extends State<TranslateFrom> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        //Textformfield here
         TextFormField(
           controller: widget.controller,
           maxLines: 6,

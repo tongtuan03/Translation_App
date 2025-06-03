@@ -20,6 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool agreePersonalData = true;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +76,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         // full name
                         TextFormField(
+                          controller: usernameController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter Full name';
@@ -210,6 +212,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 context.read<SignupBloc>().add(SignupSubmitted(
                                   emailController.text,
                                   passwordController.text,
+                                  usernameController.text
                                 ));
                               } else if (!agreePersonalData) {
                                 ScaffoldMessenger.of(context).showSnackBar(

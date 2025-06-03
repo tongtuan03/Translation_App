@@ -1,12 +1,9 @@
-// gemini_chatbot_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:translation_app/features/chatbot/bloc/chatbot_bloc.dart';
 import 'package:translation_app/features/chatbot/bloc/chatbot_event.dart';
 import 'package:translation_app/features/chatbot/bloc/chatbot_state.dart';
-
-// Loại bỏ GeminiChatbotProvider vì đã khai báo ở App
 
 class GeminiChatbotView extends StatelessWidget {
   const GeminiChatbotView({super.key});

@@ -5,14 +5,14 @@ import 'package:flutter/services.dart';
 
 class TranslateTo extends StatefulWidget {
   final String translatedText;
-  const TranslateTo({super.key, required this.translatedText});
+  final String language;
+  const TranslateTo({super.key, required this.translatedText, required this.language});
 
   @override
   State<TranslateTo> createState() => _TranslateToState();
 }
 
 class _TranslateToState extends State<TranslateTo> {
-  // Method to copy text to clipboard
   void _copyToClipboard(String text) {
     Clipboard.setData(ClipboardData(text: text)).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -25,6 +25,7 @@ class _TranslateToState extends State<TranslateTo> {
 
   Future<void> _handleVolumeUpTap() async {
     final text = widget.translatedText;
+    await _flutterTts.setLanguage(widget.language);
     await _flutterTts.speak(text);
   }
 

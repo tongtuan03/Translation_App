@@ -211,7 +211,6 @@ class _MySpeechToTextState extends State<MySpeechToText> {
   }
 }
 
-/// Displays the most recently recognized words and the sound level.
 class RecognitionResultsWidget extends StatelessWidget {
   const RecognitionResultsWidget({
     super.key,

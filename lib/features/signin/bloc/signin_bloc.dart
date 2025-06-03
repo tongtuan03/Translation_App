@@ -1,25 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:translation_app/features/signin/bloc/signin_event.dart';
 import 'package:translation_app/features/signin/bloc/signin_state.dart';
+import 'package:translation_app/data/services/firebase_services/auth_service.dart';
 
 class SigninBloc extends Bloc<SigninEvent, SigninState> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final AuthService _authService;
 
-  SigninBloc() : super(SigninInitial()) {
+  SigninBloc(this._authService) : super(SigninInitial()) {
     on<SigninSubmitted>(_onSigninSubmitted);
   }
 
   Future<void> _onSigninSubmitted(
-    SigninSubmitted event,
-    Emitter<SigninState> emit,
-  ) async {
+      SigninSubmitted event,
+      Emitter<SigninState> emit,
+      ) async {
     emit(SigninLoading());
     try {
-      await _auth.signInWithEmailAndPassword(
-        email: event.email,
-        password: event.password,
-      );
+      await _authService.signIn(event.email, event.password);
       emit(SigninSuccess());
     } catch (e) {
       emit(SigninFailure(e.toString()));

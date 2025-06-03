@@ -185,6 +185,7 @@ class _MyTextToSpeech extends State<MyTextToSpeech> {
     setState(() {
       language = selectedType;
       flutterTts.setLanguage(language!);
+      print(language);
       if (isAndroid) {
         flutterTts
             .isLanguageInstalled(language!)
