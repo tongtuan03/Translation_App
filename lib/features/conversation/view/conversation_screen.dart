@@ -6,6 +6,7 @@ import 'package:translation_app/features/conversation/bloc/conversation_state.da
 import 'package:translation_app/features/conversation/widget/micro_button.dart';
 import 'package:translation_app/features/conversation/widget/translated_text_view.dart';
 import 'package:translation_app/widgets/language_dropdown.dart';
+import 'dart:math' as math;
 
 class ConversationScreen extends StatelessWidget {
   const ConversationScreen({super.key});
@@ -30,6 +31,29 @@ class ConversationScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: GestureDetector(
+                          onTap: () {
+                            bloc.add(StartSpeechEvent(
+                              text: state.lastWordsTo ?? "",
+                              localeId: state.languageTo  ?? "vn-VN",
+                            ));
+                          },
+                          child: Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationY(math.pi), // lật theo trục Y
+                            child: Icon(
+                              Icons.volume_up_outlined,
+                              color: const Color(0xFF6D1B7B).withOpacity(0.8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
                     MicrophoneButton(
                       iconColor: (!state.isFrom && state.isListening) ? Colors.red : Colors.green,
                       backgroundColor: Colors.white,
@@ -38,13 +62,12 @@ class ConversationScreen extends StatelessWidget {
                           bloc.add(StopListeningEvent());
                         } else {
                           bloc.add(StartListeningEvent(
-                              state.languageTo
-                                  ??"vn-VN",
+                              state.languageTo ?? "vn-VN",
                               isFrom: false));
                         }
                       },
                       isFlip: true,
-                      soundLevel: (!state.isFrom && state.isListening)? state.soundLevel:0,
+                      soundLevel: (!state.isFrom && state.isListening) ? state.soundLevel : 0,
                     ),
                     TranslatedTextView(
                       translatedText: state.lastWordsTo,
@@ -52,6 +75,7 @@ class ConversationScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+
               ),
             ),
             Expanded(
@@ -134,6 +158,24 @@ class ConversationScreen extends StatelessWidget {
                       ),
                     ),
                     Text(state.isListening ? "Listening..." : "Not listening"),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0), // cách đều 4 phía 10
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: GestureDetector(
+                          onTap: () {
+                            bloc.add(StartSpeechEvent(
+                              text: state.lastWordsFrom ?? "",
+                              localeId: state.languageFrom  ?? "vn-VN",
+                            ));
+                          },
+                          child: Icon(
+                            Icons.volume_up_outlined,
+                            color: const Color(0xFF6D1B7B).withOpacity(0.8),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

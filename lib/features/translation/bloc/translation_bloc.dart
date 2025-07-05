@@ -1,17 +1,19 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../../../data/services/firebase_services/auth_service.dart';
 import '../../../data/services/firebase_services/country_service.dart';
+import '../../../data/services/firebase_services/translate_service.dart';
 import '../../../data/services/gemini_service.dart';
+import '../../../utils/convert_country_name.dart';
 import 'translation_event.dart';
 import 'translation_state.dart';
 
 class TranslationBloc extends Bloc<TranslationEvent, TranslationState> {
-  final GeminiService _geminiService=GeminiService();
-  TranslationBloc() : super(TranslationState()) {
+  final GeminiService _geminiService = GeminiService();
+  final TranslateHistoryService _historyService = TranslateHistoryService();
+  final AuthService _authService = AuthService();
 
+  TranslationBloc() : super(TranslationState()) {
     on<LanguageFromChanged>((event, emit) {
       emit(state.copyWith(languageFrom: event.language));
     });
@@ -22,11 +24,10 @@ class TranslationBloc extends Bloc<TranslationEvent, TranslationState> {
 
     on<SwitchLanguages>((event, emit) {
       emit(state.copyWith(
-        languageFrom: state.languageTo,
-        languageTo: state.languageFrom,
-        translatedText:event.inputText,
-        inputText: state.translatedText
-      ));
+          languageFrom: state.languageTo,
+          languageTo: state.languageFrom,
+          translatedText: event.inputText,
+          inputText: state.translatedText));
     });
 
     on<TranslateTextRequested>(_onTranslateTextRequested);
@@ -38,14 +39,37 @@ class TranslationBloc extends Bloc<TranslationEvent, TranslationState> {
 
   Future<void> _onTranslateTextRequested(
       TranslateTextRequested event, Emitter<TranslationState> emit) async {
-    if (event.text.isEmpty || state.languageFrom == null || state.languageTo == null) {
+    if (event.text.isEmpty ||
+        state.languageFrom == null ||
+        state.languageTo == null) {
       return;
     }
     emit(state.copyWith(isLoading: true));
+
     try {
-      final result = await _geminiService.translateText(text: event.text, fromLang: state.languageFrom!, toLang: state.languageTo!);
+      final result = await _geminiService.translateText(
+        text: event.text,
+        fromLang: state.languageFrom!,
+        toLang: state.languageTo!,
+      );
+
       emit(state.copyWith(translatedText: result, isLoading: false));
-    } catch (_) {
+      final curUser = await _authService.getCurrentUser();
+      if (curUser != null) {
+        final fromLangName = await languageCodeToName(state.languageFrom!);
+        final toLangName = await languageCodeToName(state.languageTo!);
+
+        await _historyService.addHistory(
+          originalText: event.text,
+          translatedText: result,
+          fromLang: fromLangName,
+          toLang: toLangName,
+          userId: curUser.uid,
+        );
+      }
+    } catch (e, stack) {
+      print('Translation or Firestore error: $e');
+      print('Stack trace: $stack');
       emit(state.copyWith(isLoading: false));
     }
   }
@@ -60,5 +84,4 @@ class TranslationBloc extends Bloc<TranslationEvent, TranslationState> {
       print('Error fetching countries: $e');
     }
   }
-
 }

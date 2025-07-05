@@ -1,17 +1,23 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:translation_app/data/services/gemini_service.dart';
+import '../../../data/services/firebase_services/auth_service.dart';
 import '../../../data/services/firebase_services/country_service.dart';
+import '../../../data/services/firebase_services/translate_service.dart';
 import '../../../data/services/text_to_speech_service.dart';
+import '../../../utils/convert_country_name.dart';
 import 'conversation_event.dart';
 import 'conversation_state.dart';
 
 class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
   final SpeechToText _speech = SpeechToText();
-  final GeminiService _geminiService=GeminiService();
+  final GeminiService _geminiService = GeminiService();
   final TextToSpeechService _ttsService = TextToSpeechService();
+  final  TranslateHistoryService _historyService= TranslateHistoryService();
+  final AuthService _authService = AuthService();
   ConversationBloc() : super(const ConversationState()) {
     on<InitSpeechEvent>(_onInitSpeech);
+    on<StartSpeechEvent>(_onStartSpeech);
     on<StartListeningEvent>(_onStartListening);
     on<StopListeningEvent>(_onStopListening);
     on<LanguageChangedEvent>(_onLanguageChanged);
@@ -29,7 +35,12 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
     bool hasSpeech = await _speech.initialize();
     emit(state.copyWith(hasSpeech: hasSpeech));
   }
-
+  Future<void> _onStartSpeech(
+      StartSpeechEvent event, Emitter<ConversationState> emit) async {
+    _ttsService.setLanguage(event.localeId);
+    _ttsService.setSpeechRate(0.5);
+    await _ttsService.speak(event.text);
+  }
   void _onStartListening(
       StartListeningEvent event, Emitter<ConversationState> emit) {
     _speech.listen(
@@ -39,11 +50,13 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
         add(SpeechResultEvent(result.recognizedWords, event.isFrom));
       },
     );
-    emit(state.copyWith(isListening: true,isFrom: event.isFrom));
+    emit(state.copyWith(isListening: true, isFrom: event.isFrom));
   }
+
   void soundLevelListener(double level) {
     add(UpdateSoundLevelEvent(level));
   }
+
   void _onUpdateSoundLevel(
       UpdateSoundLevelEvent event, Emitter<ConversationState> emit) {
     emit(state.copyWith(soundLevel: event.level));
@@ -51,17 +64,26 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
 
   Future<void> _onStopListening(
       StopListeningEvent event, Emitter<ConversationState> emit) async {
+    final curUser = await _authService.getCurrentUser();
     _speech.stop();
     emit(state.copyWith(isListening: false));
-    await  _ttsService.setLanguage(state.isFrom? state.languageTo!:state.languageFrom!);
-    await _ttsService.setSpeechRate(1);
-    await _ttsService.speak(state.isFrom?state.lastWordsTo:state.lastWordsFrom);
+    // await _ttsService
+    //     .setLanguage(state.isFrom ? state.languageTo! : state.languageFrom!);
+    // await _ttsService.setSpeechRate(1);
+    // await _ttsService
+    //     .speak(state.isFrom ? state.lastWordsTo : state.lastWordsFrom);
+    if (curUser != null) {
+      final fromLangName = await languageCodeToName(state.isFrom ? state.languageFrom! : state.languageTo!);
+      final toLangName = await languageCodeToName(state.isFrom ? state.languageTo! : state.languageFrom!);
+      _historyService.addHistory(originalText: !state.isFrom ? state.lastWordsTo : state.lastWordsFrom, translatedText: state.isFrom ? state.lastWordsTo : state.lastWordsFrom, fromLang: fromLangName,
+          toLang: toLangName, userId: curUser.uid);
+    }
   }
 
   void _onLanguageChanged(
       LanguageChangedEvent event, Emitter<ConversationState> emit) {
-    emit(state.copyWith(
-        languageFrom: event.fromLang, languageTo: event.toLang));
+    emit(
+        state.copyWith(languageFrom: event.fromLang, languageTo: event.toLang));
   }
 
   void _onSwitchLanguages(
@@ -76,12 +98,17 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
 
   Future<void> _onSpeechResult(
       SpeechResultEvent event, Emitter<ConversationState> emit) async {
-    if(event.result==""){
+    if (event.result == "") {
       return;
     }
-      final inputText=event.result;
-      final outputText=await _geminiService.translateText(text: inputText, fromLang:event.isFrom? state.languageFrom!:state.languageTo!, toLang:event.isFrom? state.languageTo!:state.languageFrom!);
-      emit(state.copyWith(lastWordsFrom: inputText,lastWordsTo: outputText));
+
+    final inputText = event.result;
+    final outputText = await _geminiService.translateText(
+        text: inputText,
+        fromLang: event.isFrom ? state.languageFrom! : state.languageTo!,
+        toLang: event.isFrom ? state.languageTo! : state.languageFrom!);
+
+    emit(state.copyWith(lastWordsFrom:event.isFrom ? inputText:outputText, lastWordsTo:event.isFrom ? outputText:inputText));
 
   }
 
@@ -90,7 +117,6 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
     try {
       CountryService countryService = CountryService();
       final countries = await countryService.fetchAllCountries();
-      print(countries);
       emit(state.copyWith(countries: countries));
     } catch (e) {
       print('Error fetching countries: $e');

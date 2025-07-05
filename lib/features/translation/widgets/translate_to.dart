@@ -3,16 +3,31 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 
+import '../../../data/services/text_to_speech_service.dart';
+
 class TranslateTo extends StatefulWidget {
   final String translatedText;
   final String language;
-  const TranslateTo({super.key, required this.translatedText, required this.language});
+  const TranslateTo({
+    super.key,
+    required this.translatedText,
+    required this.language,
+  });
 
   @override
   State<TranslateTo> createState() => _TranslateToState();
 }
 
 class _TranslateToState extends State<TranslateTo> {
+  String _text = '';
+  final TextToSpeechService _flutterTts = TextToSpeechService();
+
+  @override
+  void initState() {
+    super.initState();
+    _text = widget.translatedText;
+  }
+
   void _copyToClipboard(String text) {
     Clipboard.setData(ClipboardData(text: text)).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -21,12 +36,16 @@ class _TranslateToState extends State<TranslateTo> {
     });
   }
 
-  final FlutterTts _flutterTts = FlutterTts();
-
   Future<void> _handleVolumeUpTap() async {
-    final text = widget.translatedText;
     await _flutterTts.setLanguage(widget.language);
-    await _flutterTts.speak(text);
+    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.speak(_text);
+  }
+
+  void _handleClear() {
+    setState(() {
+      _text = '';
+    });
   }
 
   @override
@@ -43,7 +62,7 @@ class _TranslateToState extends State<TranslateTo> {
         Expanded(
           child: SingleChildScrollView(
             child: Text(
-              widget.translatedText,
+              _text,
               style: GoogleFonts.poppins(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w300,
@@ -65,17 +84,23 @@ class _TranslateToState extends State<TranslateTo> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // Copy icon with gesture detector
+              if (_text.isNotEmpty)
+                GestureDetector(
+                  onTap: _handleClear,
+                  child: Icon(
+                    Icons.clear,
+                    color: Colors.grey.withOpacity(0.8),
+                  ),
+                ),
+              const SizedBox(width: 8.0),
               GestureDetector(
-                onTap: () => _copyToClipboard(widget.translatedText),
+                onTap: () => _copyToClipboard(_text),
                 child: Icon(
                   Icons.copy_all_outlined,
                   color: const Color(0xFF6D1B7B).withOpacity(0.8),
                 ),
               ),
-              const SizedBox(
-                width: 8.0,
-              ),
+              const SizedBox(width: 8.0),
               GestureDetector(
                 onTap: _handleVolumeUpTap,
                 child: Icon(

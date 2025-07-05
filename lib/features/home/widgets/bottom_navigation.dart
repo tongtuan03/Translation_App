@@ -16,11 +16,7 @@ class MyNavigationBar extends StatelessWidget {
             context.read<NavigationCubit>().changeTab(index);
           },
           destinations: const [
-            NavigationDestination(
-              icon: Icon(FontAwesomeIcons.message),
-              selectedIcon: Icon(FontAwesomeIcons.message),
-              label: 'Speech to Text',
-            ),
+
             NavigationDestination(
               icon: Icon(FontAwesomeIcons.message),
               selectedIcon: Icon(FontAwesomeIcons.message),
@@ -32,9 +28,9 @@ class MyNavigationBar extends StatelessWidget {
               label: 'Translation',
             ),
             NavigationDestination(
-              icon: Icon(Icons.volume_up_sharp),
-              selectedIcon: Icon(Icons.volume_up_sharp),
-              label: 'Text To Speech',
+              icon: Icon(Icons.history_outlined),
+              selectedIcon: Icon(Icons.history),
+              label: 'History',
             ),
             NavigationDestination(
               icon: Icon(FontAwesomeIcons.robot),
