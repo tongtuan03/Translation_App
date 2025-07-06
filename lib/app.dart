@@ -29,7 +29,29 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Translation App',
-        theme: ThemeData(primarySwatch: Colors.blue),
+        theme: ThemeData(
+          primarySwatch: const MaterialColor(
+            0xFF6D1B7B,
+            <int, Color>{
+              50: Color(0xFFF3E6F4),
+              100: Color(0xFFE1BFE4),
+              200: Color(0xFFCE96D3),
+              300: Color(0xFFBA6DC2),
+              400: Color(0xFFAC4DB5),
+              500: Color(0xFF6D1B7B), // main color
+              600: Color(0xFF63186F),
+              700: Color(0xFF56145F),
+              800: Color(0xFF491150),
+              900: Color(0xFF320B36),
+            },
+          ),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFF6D1B7B),
+            foregroundColor: Colors.black,
+            elevation: 4,
+          ),
+        ),
+
         initialRoute: '/',
         routes: AppRouter.routes,
       ),

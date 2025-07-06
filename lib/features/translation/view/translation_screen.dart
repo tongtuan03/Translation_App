@@ -261,7 +261,7 @@ class _TranslationScreenState extends State<TranslationScreen> {
         padding: const EdgeInsets.symmetric(vertical: 15.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.0),
-          color: const Color(0xFF6D1B7B).withOpacity(0.8),
+          color: const Color(0xFFAEC6CF),
         ),
         child: Center(
           child: Text(

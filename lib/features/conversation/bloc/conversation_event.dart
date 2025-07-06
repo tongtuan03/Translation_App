@@ -20,7 +20,10 @@ class StartListeningEvent extends ConversationEvent {
   List<Object?> get props => [localeId, isFrom];
 }
 
-class StopListeningEvent extends ConversationEvent {}
+class StopListeningEvent extends ConversationEvent {
+  final bool isFrom;
+  const StopListeningEvent({required this.isFrom});
+}
 class StartSpeechEvent extends ConversationEvent {
   final String localeId;
   final String text;
@@ -33,8 +36,9 @@ class StartSpeechEvent extends ConversationEvent {
 class LanguageChangedEvent extends ConversationEvent {
   final String? fromLang;
   final String? toLang;
+  final bool isFrom;
 
-  const LanguageChangedEvent({required this.fromLang, required this.toLang});
+  const LanguageChangedEvent({required this.fromLang, required this.toLang,required this.isFrom});
 
   @override
   List<Object?> get props => [fromLang, toLang];
@@ -52,4 +56,11 @@ class SpeechResultEvent extends ConversationEvent {
 class UpdateSoundLevelEvent extends ConversationEvent {
   final double level;
   const UpdateSoundLevelEvent(this.level);
+}
+class RemoveWordsEvent extends ConversationEvent {
+  final bool isFrom;
+  const RemoveWordsEvent({required this.isFrom});
+
+  @override
+  List<Object?> get props => [isFrom];
 }

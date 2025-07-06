@@ -27,6 +27,15 @@ class _TranslateToState extends State<TranslateTo> {
     super.initState();
     _text = widget.translatedText;
   }
+  @override
+  void didUpdateWidget(covariant TranslateTo oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.translatedText != oldWidget.translatedText) {
+      setState(() {
+        _text = widget.translatedText;
+      });
+    }
+  }
 
   void _copyToClipboard(String text) {
     Clipboard.setData(ClipboardData(text: text)).then((_) {
@@ -38,7 +47,7 @@ class _TranslateToState extends State<TranslateTo> {
 
   Future<void> _handleVolumeUpTap() async {
     await _flutterTts.setLanguage(widget.language);
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(1);
     await _flutterTts.speak(_text);
   }
 

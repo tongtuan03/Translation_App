@@ -14,27 +14,45 @@ class TranslationBloc extends Bloc<TranslationEvent, TranslationState> {
   final AuthService _authService = AuthService();
 
   TranslationBloc() : super(TranslationState()) {
-    on<LanguageFromChanged>((event, emit) {
-      emit(state.copyWith(languageFrom: event.language));
-    });
-
-    on<LanguageToChanged>((event, emit) {
-      emit(state.copyWith(languageTo: event.language));
-    });
-
     on<SwitchLanguages>((event, emit) {
       emit(state.copyWith(
           languageFrom: state.languageTo,
           languageTo: state.languageFrom,
-          translatedText: event.inputText,
+          translatedText: state.inputText,
           inputText: state.translatedText));
     });
-
+    on<LanguageFromChanged>(_onLanguageFromChanged);
+    on<LanguageToChanged>(_onLanguageToChanged);
     on<TranslateTextRequested>(_onTranslateTextRequested);
 
     on<FetchCountriesRequested>(_onFetchCountriesRequested);
 
     add(FetchCountriesRequested());
+  }
+
+  Future<void> _onLanguageFromChanged(
+      LanguageFromChanged event, Emitter<TranslationState> emit) async {
+    final inputText = state.inputText;
+    final outputText = inputText == ""
+        ? ""
+        : await _geminiService.translateText(
+            text: inputText ?? "",
+            fromLang: state.languageFrom!,
+            toLang: event.language!);
+    emit(state.copyWith(languageFrom: event.language, inputText: outputText));
+  }
+
+  Future<void> _onLanguageToChanged(
+      LanguageToChanged event, Emitter<TranslationState> emit) async {
+    final inputText = state.translatedText;
+    final outputText = inputText == ""
+        ? ""
+        : await _geminiService.translateText(
+            text: inputText ?? "",
+            fromLang: state.languageFrom!,
+            toLang: event.language!);
+    emit(
+        state.copyWith(languageTo: event.language, translatedText: outputText));
   }
 
   Future<void> _onTranslateTextRequested(
@@ -53,7 +71,7 @@ class TranslationBloc extends Bloc<TranslationEvent, TranslationState> {
         toLang: state.languageTo!,
       );
 
-      emit(state.copyWith(translatedText: result, isLoading: false));
+      emit(state.copyWith(translatedText: result,inputText: event.text, isLoading: false));
       final curUser = await _authService.getCurrentUser();
       if (curUser != null) {
         final fromLangName = await languageCodeToName(state.languageFrom!);

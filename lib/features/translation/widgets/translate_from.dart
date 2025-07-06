@@ -62,7 +62,7 @@ class _TranslateFromState extends State<TranslateFrom> {
   Future<void> _handleVolumeUpTap() async {
     final text = widget.controller.text;
     await _flutterTts.setLanguage(widget.language);
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(1);
     await _flutterTts.speak(text);
   }
 

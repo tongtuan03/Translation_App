@@ -32,7 +32,7 @@ class _MyDrawerState extends State<MyDrawer> {
               final username = snapshot.data?['username'] ?? 'User Name';
               final email = snapshot.data?['email'] ?? 'user@example.com';
               return DrawerHeader(
-                decoration: const BoxDecoration(color: Colors.blue),
+                decoration: const BoxDecoration(color: Color(0xFFAEC6CF)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -38,7 +38,7 @@ class HomeScreen extends StatelessWidget {
             return Text(_titles[selectedIndex]);
           },
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xFF497D98),
       ),
       body: BlocBuilder<NavigationCubit, int>(
         builder: (context, selectedIndex) {
