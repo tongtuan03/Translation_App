@@ -19,6 +19,7 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
   ConversationBloc() : super(const ConversationState()) {
     on<InitSpeechEvent>(_onInitSpeech);
     on<StartSpeechEvent>(_onStartSpeech);
+    on<StopSpeechEvent>(_onStopSpeech);
     on<StartListeningEvent>(_onStartListening);
     on<StopListeningEvent>(_onStopListening);
     on<LanguageChangedEvent>(_onLanguageChanged);
@@ -41,9 +42,20 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
   Future<void> _onStartSpeech(
       StartSpeechEvent event, Emitter<ConversationState> emit) async {
     _ttsService.setLanguage(event.localeId);
-    _ttsService.setSpeechRate(1);
-    await _ttsService.speak(event.text);
+    _ttsService.setSpeechRate(0.8);
+    emit(state.copyWith(isSpeaking: true, isFrom: event.isFrom));
+    try {
+      await _ttsService.speak(event.text);
+    } finally {
+      // emit(state.copyWith(isSpeaking: false,isFrom: event.isFrom));
+    }
   }
+  Future<void> _onStopSpeech(
+      StopSpeechEvent event, Emitter<ConversationState> emit) async {
+    await _ttsService.stop();
+    emit(state.copyWith(isSpeaking: false));
+  }
+
 
   void _onStartListening(
       StartListeningEvent event, Emitter<ConversationState> emit) {
@@ -89,7 +101,7 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
 
     await _ttsService
         .setLanguage(state.isFrom ? state.languageTo! : state.languageFrom!);
-    await _ttsService.setSpeechRate(1);
+    await _ttsService.setSpeechRate(0.8);
     await _ttsService
         .speak(state.isFrom ? state.lastWordsTo : state.lastWordsFrom);
     if (curUser != null) {

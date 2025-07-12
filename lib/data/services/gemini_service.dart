@@ -26,7 +26,7 @@ class GeminiService {
     try {
       final content = [
         Content.text(
-            'Translate the following text from $fromLang to $toLang. Only return the translated text, without any explanation or additional message: "$text"'
+            'You are a professional translator. Please translate the following text from $fromLang to $toLang, preserving the original meaning, tone, and context. Understand idioms, cultural references, and conversational flow. Only return the translated text, without explanation:\n\n"$text"'
         )
       ];
 

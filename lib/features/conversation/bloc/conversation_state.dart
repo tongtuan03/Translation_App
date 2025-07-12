@@ -5,6 +5,7 @@ import '../../../models/language_model.dart';
 class ConversationState extends Equatable {
   final bool hasSpeech;
   final bool isListening;
+  final bool isSpeaking;
   final String lastWordsFrom;
   final String lastWordsTo;
   final String? languageFrom;
@@ -16,6 +17,7 @@ class ConversationState extends Equatable {
   const ConversationState({
     this.hasSpeech = false,
     this.isListening = false,
+    this.isSpeaking=false ,
     this.lastWordsFrom = '',
     this.lastWordsTo = '',
     this.languageFrom,
@@ -28,6 +30,7 @@ class ConversationState extends Equatable {
   ConversationState copyWith({
     bool? hasSpeech,
     bool? isListening,
+    bool? isSpeaking,
     String? lastWordsFrom,
     String? lastWordsTo,
     String? languageFrom,
@@ -39,6 +42,7 @@ class ConversationState extends Equatable {
     return ConversationState(
       hasSpeech: hasSpeech ?? this.hasSpeech,
       isListening: isListening ?? this.isListening,
+      isSpeaking: isSpeaking ?? this.isSpeaking,
       lastWordsFrom: lastWordsFrom ?? this.lastWordsFrom,
       lastWordsTo: lastWordsTo ?? this.lastWordsTo,
       languageFrom: languageFrom ?? this.languageFrom,
@@ -53,6 +57,7 @@ class ConversationState extends Equatable {
   List<Object?> get props => [
         hasSpeech,
         isListening,
+        isSpeaking,
         lastWordsFrom,
         lastWordsTo,
         languageFrom,

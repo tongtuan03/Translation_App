@@ -47,16 +47,22 @@ class ConversationScreen extends StatelessWidget {
                                 child: Align(
                                   alignment: Alignment.topLeft,
                                   child: GestureDetector(
-                                    onTap: () {
-                                      bloc.add(StartSpeechEvent(
-                                        text: state.lastWordsTo ?? "",
-                                        localeId: state.languageTo ?? "vn-VN",
-                                      ));
-                                    },
+                                 onTap: () {
+                                   if (state.isSpeaking) {
+                                     bloc.add(const StopSpeechEvent());
+                                   } else {
+                                     bloc.add(StartSpeechEvent(
+                                       text: state.lastWordsTo ?? "",
+                                       localeId: state.languageTo ?? "vn-VN",
+                                       isFrom: false
+                                     ));
+                                   }
+                                 },
                                     child: Transform(
                                       alignment: Alignment.center,
                                       transform: Matrix4.rotationY(math.pi),
                                       child: Icon(
+                                        state.isSpeaking && !state.isFrom ? Icons.stop :
                                         Icons.volume_up_outlined,
                                         color: const Color(0xFF6D1B7B).withOpacity(0.8),
                                       ),
@@ -87,7 +93,7 @@ class ConversationScreen extends StatelessWidget {
                           ),
 
                           MicrophoneButton(
-                            iconColor: (!state.isFrom && state.isListening) ? Colors.red : Color(0xFFAEC6CF),
+                            iconColor: (!state.isFrom && state.isListening) ? Colors.red : const Color(0xFFAEC6CF),
                             backgroundColor: Colors.white,
                             onPressed: () {
                               if (state.isListening) {
@@ -98,6 +104,7 @@ class ConversationScreen extends StatelessWidget {
                                     isFrom: false));
                               }
                             },
+
                             isFlip: true,
                             soundLevel: (!state.isFrom && state.isListening) ? state.soundLevel : 0,
                           ),
@@ -212,12 +219,20 @@ class ConversationScreen extends StatelessWidget {
                                   alignment: Alignment.bottomRight,
                                   child: GestureDetector(
                                     onTap: () {
-                                      bloc.add(StartSpeechEvent(
-                                        text: state.lastWordsFrom ?? "",
-                                        localeId: state.languageFrom ?? "vn-VN",
-                                      ));
+                                      if (state.isSpeaking) {
+                                        bloc.add(const StopSpeechEvent());
+                                      }
+                                      else{
+                                        bloc.add(StartSpeechEvent(
+                                          isFrom: true,
+                                          text: state.lastWordsFrom ?? "",
+                                          localeId: state.languageFrom ??
+                                              "vn-VN",
+                                        ));
+                                      }
                                     },
                                     child: Icon(
+                                      state.isSpeaking && state.isFrom ? Icons.stop :
                                       Icons.volume_up_outlined,
                                       color: const Color(0xFF6D1B7B).withOpacity(0.8),
                                     ),

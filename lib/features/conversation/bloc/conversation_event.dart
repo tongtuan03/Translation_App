@@ -27,10 +27,16 @@ class StopListeningEvent extends ConversationEvent {
 class StartSpeechEvent extends ConversationEvent {
   final String localeId;
   final String text;
-  const StartSpeechEvent({required this.localeId,required this.text});
+  final bool isFrom;
+  const StartSpeechEvent({required this.localeId,required this.text,required this.isFrom});
 
   @override
   List<Object?> get props => [localeId, text];
+}
+class StopSpeechEvent extends ConversationEvent {
+  const StopSpeechEvent();
+  @override
+  List<Object?> get props => [];
 }
 
 class LanguageChangedEvent extends ConversationEvent {
