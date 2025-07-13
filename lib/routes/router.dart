@@ -3,6 +3,7 @@ import 'package:translation_app/features/splash/view/splash_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/signin/view/signin_screen.dart';
 import '../features/signup/view/signup_screen.dart';
+import '../features/chat_v2/view/chat_v2_screen.dart';
 import '../features/welcome/welcome_screen.dart';
 
 class AppRouter {
@@ -12,5 +13,6 @@ class AppRouter {
     '/welcome': (context) => const WelcomeScreen(),
     '/signin': (context) => const SignInScreen(),
     '/signup': (context) => const SignUpScreen(),
+    '/chat_v2': (context) =>  ChatScreen(),
   };
 }

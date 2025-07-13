@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../blocs/navigationbar/navigation_cubit.dart';
 import '../../../data/services/firebase_services/auth_service.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -22,51 +24,67 @@ class _MyDrawerState extends State<MyDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          FutureBuilder<Map<String, String?>>(
-            future: _getUserInfo(),
-            builder: (context, snapshot) {
-              final username = snapshot.data?['username'] ?? 'User Name';
-              final email = snapshot.data?['email'] ?? 'user@example.com';
-              return DrawerHeader(
-                decoration: const BoxDecoration(color: Color(0xFFAEC6CF)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const CircleAvatar(
-                      radius: 30,
-                      backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+    return BlocBuilder<NavigationCubit, int>(
+      builder: (context, selectedIndex) {
+        return Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              FutureBuilder<Map<String, String?>>(
+                future: _getUserInfo(),
+                builder: (context, snapshot) {
+                  final username = snapshot.data?['username'] ?? 'User Name';
+                  final email = snapshot.data?['email'] ?? 'user@example.com';
+                  return DrawerHeader(
+                    decoration: const BoxDecoration(color: Color(0xFFAEC6CF)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const CircleAvatar(
+                          radius: 30,
+                          backgroundImage:
+                              NetworkImage('https://via.placeholder.com/150'),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          username,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 20),
+                        ),
+                        Text(
+                          email,
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      username,
-                      style: const TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                    Text(
-                      email,
-                      style: const TextStyle(color: Colors.white70),
-                    ),
-                  ],
-                ),
-              );
-            },
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.explore),
+                title: const Text('Explore'),
+                onTap: () async {
+                  if (mounted) {
+                    Navigator.pop(context);
+                    context.read<NavigationCubit>().changeTab(4);
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Logout'),
+                onTap: () async {
+                  await _authService.signOut();
+                  if (mounted) {
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/signin', (route) => false);
+                  }
+                },
+              ),
+            ],
           ),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Logout'),
-            onTap: () async {
-              await _authService.signOut();
-              if (mounted) {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/signin', (route) => false);
-              }
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

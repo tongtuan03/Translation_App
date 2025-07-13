@@ -5,11 +5,10 @@ import 'package:translation_app/blocs/navigationbar/navigation_cubit.dart';
 import 'package:translation_app/features/conversation/view/conversation_screen.dart';
 import 'package:translation_app/features/home/widgets/bottom_navigation.dart';
 import 'package:translation_app/features/home/widgets/drawer.dart';
-import 'package:translation_app/features/translation/text_to_speech.dart';
 import 'package:translation_app/features/translation/view/translation_screen.dart';
 
+import '../chat_v2/view/chat_v2_screen.dart';
 import '../chatbot/view/gemini_chatbot.dart';
-import '../conversation/speech_to_text.dart';
 import '../history/view/history_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -20,6 +19,7 @@ class HomeScreen extends StatelessWidget {
     const TranslationScreen(),
     const HistoryScreen(),
     const GeminiChatbotView(),
+    ChatScreen(),
   ];
 
   final List<String> _titles = [
@@ -27,11 +27,12 @@ class HomeScreen extends StatelessWidget {
     'Translation',
     'History',
     'AI Chatbot',
+    'Chatbot_v2',
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+      return Scaffold(
       appBar: AppBar(
         title: BlocBuilder<NavigationCubit, int>(
           builder: (context, selectedIndex) {

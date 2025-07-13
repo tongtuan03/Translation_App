@@ -11,12 +11,11 @@ class MyNavigationBar extends StatelessWidget {
     return BlocBuilder<NavigationCubit, int>(
       builder: (context, selectedIndex) {
         return NavigationBar(
-          selectedIndex: selectedIndex,
+          selectedIndex: selectedIndex > 3 ? 0 : selectedIndex,
           onDestinationSelected: (index) {
             context.read<NavigationCubit>().changeTab(index);
           },
           destinations: const [
-
             NavigationDestination(
               icon: Icon(FontAwesomeIcons.message),
               selectedIcon: Icon(FontAwesomeIcons.message),
