@@ -46,8 +46,11 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
     emit(state.copyWith(isSpeaking: true, isFrom: event.isFrom));
     try {
       await _ttsService.speak(event.text);
+    }catch(e){
+      emit(ConversationError(e.toString()));
     } finally {
       // emit(state.copyWith(isSpeaking: false,isFrom: event.isFrom));
+
     }
   }
   Future<void> _onStopSpeech(

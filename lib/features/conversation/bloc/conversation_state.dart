@@ -67,3 +67,11 @@ class ConversationState extends Equatable {
         isFrom,
       ];
 }
+class ConversationError extends ConversationState {
+  final String message;
+
+  const ConversationError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}

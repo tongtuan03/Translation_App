@@ -19,7 +19,7 @@ class HomeScreen extends StatelessWidget {
     const TranslationScreen(),
     const HistoryScreen(),
     const GeminiChatbotView(),
-    ChatScreen(),
+    const ChatScreen(),
   ];
 
   final List<String> _titles = [
@@ -27,6 +27,7 @@ class HomeScreen extends StatelessWidget {
     'Translation',
     'History',
     'AI Chatbot',
+    'Chatbot_v2',
     'Chatbot_v2',
   ];
 

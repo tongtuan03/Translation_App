@@ -61,8 +61,8 @@ class _MyDrawerState extends State<MyDrawer> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.explore),
-                title: const Text('Explore'),
+                leading: const Icon(Icons.chat_bubble),
+                title: const Text('Chat v2'),
                 onTap: () async {
                   if (mounted) {
                     Navigator.pop(context);

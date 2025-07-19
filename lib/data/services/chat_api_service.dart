@@ -11,8 +11,8 @@ class ChatApiService {
   final String _baseUrl = 'http://localhost:8080';
 
   ChatApiService() {
-    _dio.options.connectTimeout = const Duration(seconds: 5);
-    _dio.options.receiveTimeout = const Duration(seconds: 3);
+    _dio.options.connectTimeout = const Duration(seconds: 20);
+    _dio.options.receiveTimeout = const Duration(seconds: 20);
   }
 
   Future<String> chat(String message, {String? userId}) async {
